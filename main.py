@@ -12,7 +12,7 @@ from pymilvus import (
 
 connections.connect("default", host="localhost", port="19530")
 
-utility.drop_collection("hello_milvus")
+# utility.drop_collection("hello_milvus")
 
 fields = [
     FieldSchema(name="pk", dtype=DataType.INT64, is_primary=True, auto_id=False),
@@ -31,12 +31,12 @@ entities = [
 ]
 
 print(entities)
-# exit()
+
 insert_result = hello_milvus.insert(entities)
 
 index = {
     "index_type": "IVF_FLAT",
-    "metric_type": "L2",
+    "metric_type": "COSINE",
     "params": {"nlist": 128},
 }
 hello_milvus.create_index("embeddings", index)
@@ -44,7 +44,7 @@ hello_milvus.create_index("embeddings", index)
 hello_milvus.load()
 vectors_to_search = entities[-1][-2:]
 search_params = {
-    "metric_type": "L2",
+    "metric_type": "COSINE",
     "params": {"nprobe": 10},
 }
 result = hello_milvus.search(vectors_to_search, "embeddings", search_params, limit=3, output_fields=["random"])
@@ -59,4 +59,4 @@ print(result)
 # hello_milvus.delete(expr)
 
 
-# utility.drop_collection("hello_milvus")
+utility.drop_collection("hello_milvus")

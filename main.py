@@ -9,8 +9,7 @@ from pymilvus import (
     Collection,
 )
 
-
-connections.connect("default", host="localhost", port="19530")
+connections.connect(db_name="default", host="localhost", port="19530")
 
 # utility.drop_collection("hello_milvus")
 
@@ -21,16 +20,18 @@ fields = [
 ]
 schema = CollectionSchema(fields, "hello_milvus is the simplest demo to introduce the APIs")
 hello_milvus = Collection("hello_milvus", schema)
+# hello_milvus_1 = Collection("hello_milvus_1", schema)
 
 
 import random
+
 entities = [
     [i for i in range(3000)],  # field pk
     [float(random.randrange(-20, -10)) for _ in range(3000)],  # field random
     [[random.random() for _ in range(8)] for _ in range(3000)],  # field embeddings
 ]
 
-print(entities)
+# print(entities)
 
 insert_result = hello_milvus.insert(entities)
 
@@ -49,14 +50,10 @@ search_params = {
 }
 result = hello_milvus.search(vectors_to_search, "embeddings", search_params, limit=3, output_fields=["random"])
 
-result = hello_milvus.query(expr="random > -14", output_fields=["random", "embeddings"])
+result2 = hello_milvus.query(expr="random > -14", output_fields=["random", "embeddings"])
 
 result = hello_milvus.search(vectors_to_search, "embeddings", search_params, limit=3, expr="random > -12", output_fields=["random"])
 
-print(result)
+print(utility.list_collections())
 
-# expr = f"pk in [{ids[0]}, {ids[1]}]"
-# hello_milvus.delete(expr)
-
-
-utility.drop_collection("hello_milvus")
+# utility.drop_collection("hello_milvus")
